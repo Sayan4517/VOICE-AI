@@ -1,12 +1,15 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify,render_template
 import requests
 import os
 from dotenv import load_dotenv
 
-load_dotenv()  # Loads variables from .env
+load_dotenv()  
 
 app = Flask(__name__)
 MURF_API_KEY = os.getenv("MURF_API_KEY")
+@app.route("/")
+def index():
+    return render_template("index.html")
 
 @app.route("/generate-audio", methods=["POST"])
 def generate_audio():
@@ -20,8 +23,11 @@ def generate_audio():
     }
 
     payload = {
-        "voiceId": "en-US-terrell",  
-        "text": input_text
+        
+  "voiceId": "en-US-terrell",
+  "text": input_text
+
+
     }
 
     murf_api_url = "https://api.murf.ai/v1/speech/generate"
@@ -29,7 +35,7 @@ def generate_audio():
 
     if response.status_code == 200:
         response_data = response.json()
-        audio_url = response_data.get("audioFile")  # ✅ Get from "audioFile"
+        audio_url = response_data.get("audioFile") 
         return jsonify({"audio_url": audio_url})
     else:
         return jsonify({
